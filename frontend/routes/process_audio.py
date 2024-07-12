@@ -5,7 +5,9 @@ import io
 import base64
 import json
 import torch
+from pathlib import Path
 from loguru import logger
+from tempfile import SpooledTemporaryFile
 from requests import Request, Response
 from fastapi.templating import Jinja2Templates
 
@@ -22,18 +24,20 @@ def list_to_bytes(speech_output):
     return struct.pack(f'{len(speech_output)}f', *speech_output)
 
 
-def process_audio_request(
+async def process_audio_request(
     audioData: str,
     task_string: str,
     sourceLanguageOptions: str,
     targetLanguageOptions: str
 ):
+    encoded_audio = audioData
+    logger.debug(f"Audio data: {encoded_audio.read()[:20]}..")
+       
     target_language = targetLanguageOptions.replace("\\", "").replace("\"", "")
     source_language = sourceLanguageOptions.replace("\\", "").replace("\"", "")
-    logger.debug(audioData)
     return {
         "data": {
-            "input": audioData,
+            "input": encoded_audio,
             "task_string": task_string,
             "target_language": target_language,
             "source_language": source_language,
@@ -56,26 +60,3 @@ def process_audio_response(
         },
     )
     
-    
-def speech_output_to_base64(speech_output) -> str:
-    # Convert audio tensors to bytes
-    audio_bytes_list = []
-    for audio_wav in speech_output.audio_wavs:
-        buffer = io.BytesIO()
-        torch.save(audio_wav, buffer)
-        audio_bytes_list.append(buffer.getvalue())
-
-    # Create a dictionary with all the data
-    data_dict = {
-        "units": speech_output.units,
-        "audio_wavs": audio_bytes_list,
-        "sample_rate": speech_output.sample_rate
-    }
-
-    # Convert the dictionary to JSON
-    json_data = json.dumps(data_dict)
-
-    # Encode the JSON string to bytes and then to base64
-    base64_encoded = base64.b64encode(json_data.encode('utf-8')).decode('utf-8')
-
-    return base64_encoded

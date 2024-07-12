@@ -1,7 +1,7 @@
 import base64
 import json
 import binascii
-from fastapi import APIRouter, Request, Form, HTTPException, File
+from fastapi import APIRouter, Request, Form, HTTPException, File, UploadFile
 from .process_audio import process_audio_request, process_audio_response
 from .process_text import process_text_request, process_text_response
 from fastapi.templating import Jinja2Templates
@@ -19,7 +19,7 @@ router = APIRouter()
 async def get_translate(
     request: Request, 
     textInputArea: Optional[str] = Form(default=None),
-    audioData=File(default=None),
+    audioData: UploadFile = File(default=None),
     inputModeOptions: str = Form(default=None),
     outputModeOptions: str = Form(...),
     sourceLanguageOptions: str = Form(...),
@@ -46,25 +46,22 @@ async def get_translate(
 
     data_request = None
     if task_string.startswith("speech"):
-        data_request = process_audio_request(audioData.file, task_string, sourceLanguageOptions, targetLanguageOptions)
+        data_request = await process_audio_request(audioData, task_string, sourceLanguageOptions, targetLanguageOptions)
     else:
         data_request = process_text_request(textInputArea, task_string, targetLanguageOptions, sourceLanguageOptions)
-    logger.debug(audioData)
-    print(f"Sending request: {data_request}")
+    print(f"Sending request")
     url = "https://miner-cellium.ngrok.app/modules/translation/process"
     translation_request = data_request
-        
     try:
         response = requests.post(url, json=translation_request, timeout=30)
         response.raise_for_status()
-        print(response.content)
         print(f"Response status: {response.status_code}")
-        print(f"Response content: {response.text[:1000]}")  # Print first 1000 characters of response
+        print(f"Response content: {response.text[50:]}")
         
         if task_string.endswith("text"):
             return process_text_response(request, response, templates)
         else:
-            return process_audio_response(request, response, templates)
+            return await process_audio_response(request, response, templates)
     except requests.RequestException as e:
         print(f"Request failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Translation service error: {str(e)}")
