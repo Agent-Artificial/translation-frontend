@@ -39,5 +39,5 @@ def index():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("frontend.main:app", host="0.0.0.0", port=5757, reload=True)
+    uvicorn.run("frontend.main:app", host="0.0.0.0", port=5700, reload=True)
     

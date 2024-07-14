@@ -31,19 +31,19 @@ class ResponseHandler:
         outputModeOptions: str = None,
         sourceLanguageOptions: str = None,
         targetLanguageOptions: str = None,
-        ):
+    ):
         try:
             self._set_task_string(inputModeOptions, outputModeOptions)
             self.source_language = self._process_languages(sourceLanguageOptions)
             self.target_language = self._process_languages(targetLanguageOptions)
             
             if self.task_string.startswith("speech"):
-                input_data = await self._process_input_audio(audioData)
+                input_data = self._process_input_audio(await audioData.read())
             else:
-                input_data = await self._process_input_text(textInputArea)
+                input_data = self._process_input_text(textInputArea)
                 
             encoded_request = self._b64encode_request(input_data, self.task_string, self.target_language, self.source_language)
-            response = await self._make_request(encoded_request, self.url)
+            response = self._make_request(encoded_request, self.url)
             
             logger.debug(response.text[:50])
             if self.task_string.endswith("text"):
@@ -67,16 +67,18 @@ class ResponseHandler:
     def _process_languages(self, languageOption: str):
         return languageOption.replace("\\", "").replace("\"", "")
     
-    async def _process_input_text(self, textInputArea: str):
+    def _process_input_text(self, textInputArea: str):
         return textInputArea        
     
-    async def _process_input_audio(self, audioData: UploadFile):
-        input_buffer = io.BytesIO(await audioData.read())
-        output_buffer = io.BytesIO()
-        audio = AudioSegment.from_file(input_buffer, format="wav")
-        audio.export(output_buffer, format="wav")
-        return output_buffer.getvalue()
-    
+    def _process_input_audio(self, audioData: bytes, audio_path: Optional[str] = None):
+        
+        audio_path = audio_path or "static/audio/audio_request.wav"
+        audio = AudioSegment.from_file(io.BytesIO(audioData), format="webm")
+        audio.export(audio_path, format="wav")
+
+        with open(audio_path, "rb") as f:
+            return f.read()
+        
     def _b64encode_request(self, input_data, task_string, target_language, source_language):
         return {
             "data": {
@@ -99,18 +101,21 @@ class ResponseHandler:
         response_path = "static/audio/audio_response.wav"
         unencoded = base64.b64decode(response_data)
         audio = torch.load(io.BytesIO(unencoded)).cpu()
+    
+        logger.debug(audio[:30])
         torchaudio.save(
             src=audio,
             uri=response_path, 
             sample_rate=16000,
             format="wav"
         )
+        logger.debug("audio saved")
         return response_path
     
     def _return_template_response(self, request, response_data):
         if self.task_string.endswith("text"):
             return self.templates.TemplateResponse(
-                "components/textOutputs.html",
+                "components/textOutput.html",
                 {
                     "request": request,
                     "text": response_data
@@ -118,7 +123,7 @@ class ResponseHandler:
             )
         else:
             return self.templates.TemplateResponse(
-                "components/audioOutputs.html",
+                "components/audioOutput.html",
                 {
                     "request": request,
                     "audio_url": response_data

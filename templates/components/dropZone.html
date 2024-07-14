@@ -59,7 +59,7 @@
             Object.keys(options).forEach(key => formData.append(key, options[key]));
 
             htmx.ajax('POST', '/translate', {
-                target: '#audioResult',
+                target: '#audioOutputArea',
                 swap: 'innerHTML',
                 values: formData
             });
