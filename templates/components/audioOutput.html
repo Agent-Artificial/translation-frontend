@@ -3,9 +3,11 @@
     <div id="audioOutput">
         <div class="flex justify-center">
             <div id="audioOutputArea" class="w-full">
+                <div id="audioResult">
                 {% block audioPlayer %}
                     {% include "components/audioPlayer.html" %}
                 {% endblock %}
+                </div>
             </div>
         </div>
     </div>

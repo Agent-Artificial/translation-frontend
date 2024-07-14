@@ -1,8 +1,10 @@
 {% block textOutput %}
     <div id="textOutput" class="mt-4">
         <h2 class="mb-2 font-semibold text-xl">Text Output</h2>
-        <textarea id="textOutputArea" rows="4" class="p-2 border rounded w-full" readonly>
-            {{ text }}
-        </textarea>
+        <div id="textResult">
+            <textarea id="textOutputArea" rows="4" class="p-2 border rounded w-full" value="" readonly>
+                {{ text }}
+            </textarea>
+        </div>
     </div>
 {% endblock %}

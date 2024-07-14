@@ -42,7 +42,7 @@ class ResponseHandler:
             else:
                 input_data = self._process_input_text(textInputArea)
                 
-            encoded_request = self._b64encode_request(input_data, self.task_string, self.target_language, self.source_language)
+            encoded_request = self._construct_request(input_data, self.task_string, self.target_language, self.source_language)
             response = self._make_request(encoded_request, self.url)
             
             logger.debug(response.text[:50])
@@ -77,12 +77,12 @@ class ResponseHandler:
         audio.export(audio_path, format="wav")
 
         with open(audio_path, "rb") as f:
-            return f.read()
+            return base64.b64encode(f.read()).decode("utf-8")
         
-    def _b64encode_request(self, input_data, task_string, target_language, source_language):
+    def _construct_request(self, input_data, task_string, target_language, source_language):
         return {
             "data": {
-                "input": base64.b64encode(input_data).decode("utf-8") if isinstance(input_data, bytes) else base64.b64encode(input_data.encode("utf-8")).decode("utf-8"),
+                "input": input_data,
                 "task_string": task_string,
                 "target_language": target_language,
                 "source_language": source_language,
