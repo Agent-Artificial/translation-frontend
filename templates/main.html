@@ -7,8 +7,11 @@
     class="font-bold text-xl sm:text-4xl text-blue-950 dark:text-white item text-center font-black"
     style="font-family: Montserrat, sans serif"
   >
-    Transcription Subtensor
+    Sylliba
   </h1>
+  <h4 class="font-bold text-l sm:text-xl text-blue-950 dark:text-white item text-center font-black" style="font-family: Montserrat, sans serif">
+    Global Understanding
+  </h4>
   <hr
     class="border-t my-4"
     style="border-image: linear-gradient(to right, #44bcff, #ff44ec, #ff675e) 1"
@@ -47,6 +50,11 @@
   </div>
   <div id="translateButtonContainer" class="mb-2 p-2">
     {% block translateButton %} {% include "components/translateButton.html" %}
+    {% endblock %}
+  </div>
+  <div id="helpButtonContainer" class="mb-2 pm-2">
+    {% block helpButton %}
+    {% include "components/helpButton.html" %}
     {% endblock %}
   </div>
 </div>

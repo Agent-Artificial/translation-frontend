@@ -1,0 +1,29 @@
+{% block helpButton %}
+<button id="helpButton" width="64px" height="64px" class="flex justify-end">
+    <img src="assets/question-circle.svg" width="64px" height="64pix" class="justify-end bg-indigo-400 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-xl" alt="help"></img>
+</button>
+
+<!-- Add this at the end of your body content -->
+<div id="helpModal" class="fixed inset-0 bg-slate-800 bg-opacity-50 overflow-y-auto text-white h-full w-full" style="display: none;">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-slate-800">
+        <div id="helpContent"></div>
+        <div class="text-center mt-4">
+            <button id="closeHelp" class="px-4 py-2 bg-indigo-400 text-white text-base font-medium rounded-md shadow-sm hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('helpButton').addEventListener('click', function() {
+        htmx.ajax('GET', '/help', {target: '#helpContent', swap: 'innerHTML'});
+        document.getElementById('helpModal').style.display = 'block';
+    });
+
+    document.getElementById('closeHelp').addEventListener('click', function() {
+        document.getElementById('helpModal').style.display = 'none';
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% block help %}
+<h2 class="text-2xl font-bold mb-4">How to Use the Translation App</h2>
+<ol class="list-decimal list-inside space-y-2 bg-slate-800 text-white">
+    <li>Select your input mode (text or audio) from the dropdown menu.</li>
+    <li>Choose your source language from the "From" dropdown.</li>
+    <li>Choose your target language from the "To" dropdown.</li>
+    <li>If using text input:
+        <ul class="list-disc list-inside ml-4">
+            <li>Type or paste your text into the input box.</li>
+        </ul>
+    </li>
+    <li>If using audio input:
+        <ul class="list-disc list-inside ml-4">
+            <li>Click the "Record" button to start recording.</li>
+            <li>Click "Stop" when you're done speaking.</li>
+            <li>Alternatively, upload an audio file using the "Upload" button.</li>
+        </ul>
+    </li>
+    <li>Click the "Translate" button to process your input.</li>
+    <li>View the translated text or listen to the translated audio in the output section.</li>
+    <li>Known issues:
+        <ul class="list-disc list-inside ml-4">
+            <li> Cannot reload the audio recorder after switching from audio to text and back. </li>
+            <li> File uploading is not fully implemented </li>
+        </ul>
+    </li>
+</ol>
+<p class="mt-4">
+    For more detailed information, please refer to the README file in the project repository.
+</p>
+
+
+{% endblock %}

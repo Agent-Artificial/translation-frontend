@@ -10,6 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routes.language_route import router as language_router
 from .routes.mode_options import router as mode_options
 from .routes.translation_route import router as translation_router
+from .routes.help_route import router as help_router
+from .routes.torch_route import router as torch_router
 
 app = FastAPI()
 
@@ -28,6 +30,8 @@ app.add_middleware(
 app.include_router(language_router)
 app.include_router(mode_options)
 app.include_router(translation_router)
+app.include_router(help_router)
+app.include_router(torch_router)
 
 templates = Jinja2Templates(directory="templates")
 
@@ -39,5 +43,5 @@ def index():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("frontend.main:app", host="0.0.0.0", port=5700, reload=True)
+    uvicorn.run("frontend.main:app", host="0.0.0.0", port=5757, reload=True)
     

@@ -36,4 +36,4 @@ RUN poetry install --no-interaction --no-ansi
 # Creating folders, and files for a project:
 COPY . /app
 
-CMD ["poetry", "run", "uvicorn", "frontend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uvicorn", "frontend.main:app", "--host", "0.0.0.0", "--port", "5757"]
