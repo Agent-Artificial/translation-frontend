@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { json } = require('stream/consumers');
+const axois = require("axios");
 // Assuming 'audioData' is the base64-encoded string received from the backend
 
 async function getAudioData() {
@@ -7,7 +8,7 @@ async function getAudioData() {
     body = {
         data: {
             input: "hello world",
-            task_string: "text2text",
+            task_string: "text2speech",
             target_language: "french",
             source_language: "english",
         }
@@ -23,6 +24,7 @@ async function getAudioData() {
 
 async function convert() {
     audioData = await getAudioData();
+    console.log(audioData);
     return await fetch("https://translation-cellium.ngrok.app/torch", {
         method: "POST",
         headers: {
